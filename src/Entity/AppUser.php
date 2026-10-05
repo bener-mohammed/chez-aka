@@ -48,10 +48,17 @@ class AppUser
     #[ORM\OneToMany(targetEntity: Reservation::class, mappedBy: 'user')]
     private Collection $reservations;
 
+    /**
+     * @var Collection<int, CustomerOrder>
+     */
+    #[ORM\OneToMany(targetEntity: CustomerOrder::class, mappedBy: 'user')]
+    private Collection $customerOrders;
+
     public function __construct()
     {
         $this->createdAt = new \DateTimeImmutable();
         $this->reservations = new ArrayCollection();
+        $this->customerOrders = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -185,6 +192,24 @@ class AppUser
             if ($reservation->getUser() === $this) {
                 $reservation->setUser(null);
             }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, CustomerOrder>
+     */
+    public function getCustomerOrders(): Collection
+    {
+        return $this->customerOrders;
+    }
+
+    public function addCustomerOrder(CustomerOrder $customerOrder): static
+    {
+        if (!$this->customerOrders->contains($customerOrder)) {
+            $this->customerOrders->add($customerOrder);
+            $customerOrder->setUser($this);
         }
 
         return $this;
