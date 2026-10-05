@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\ServiceDayRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -41,9 +43,16 @@ class ServiceDay
     #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $updatedAt = null;
 
+    /**
+     * @var Collection<int, Reservation>
+     */
+    #[ORM\OneToMany(targetEntity: Reservation::class, mappedBy: 'serviceDay')]
+    private Collection $reservations;
+
     public function __construct()
     {
         $this->createdAt = new \DateTimeImmutable();
+        $this->reservations = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -149,6 +158,24 @@ class ServiceDay
     public function setUpdatedAt(?\DateTimeImmutable $updatedAt): static
     {
         $this->updatedAt = $updatedAt;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Reservation>
+     */
+    public function getReservations(): Collection
+    {
+        return $this->reservations;
+    }
+
+    public function addReservation(Reservation $reservation): static
+    {
+        if (!$this->reservations->contains($reservation)) {
+            $this->reservations->add($reservation);
+            $reservation->setServiceDay($this);
+        }
 
         return $this;
     }
