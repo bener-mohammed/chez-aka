@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\CustomerOrderRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -53,9 +55,16 @@ private ?ServiceDay $serviceDay = null;
 )]
 private ?AppUser $user = null;
 
+/**
+ * @var Collection<int, Payment>
+ */
+#[ORM\OneToMany(targetEntity: Payment::class, mappedBy: 'customerOrder')]
+private Collection $payments;
+
     public function __construct()
 {
     $this->createdAt = new \DateTimeImmutable();
+    $this->payments = new ArrayCollection();
 }
 
     public function getId(): ?int
@@ -161,6 +170,24 @@ private ?AppUser $user = null;
     public function setUser(AppUser $user): static
     {
         $this->user = $user;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Payment>
+     */
+    public function getPayments(): Collection
+    {
+        return $this->payments;
+    }
+
+    public function addPayment(Payment $payment): static
+    {
+        if (!$this->payments->contains($payment)) {
+            $this->payments->add($payment);
+            $payment->setCustomerOrder($this);
+        }
 
         return $this;
     }
