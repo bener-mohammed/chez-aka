@@ -61,10 +61,17 @@ private ?AppUser $user = null;
 #[ORM\OneToMany(targetEntity: Payment::class, mappedBy: 'customerOrder')]
 private Collection $payments;
 
+/**
+ * @var Collection<int, OrderItem>
+ */
+#[ORM\OneToMany(targetEntity: OrderItem::class, mappedBy: 'customerOrder')]
+private Collection $orderItems;
+
     public function __construct()
 {
     $this->createdAt = new \DateTimeImmutable();
     $this->payments = new ArrayCollection();
+    $this->orderItems = new ArrayCollection();
 }
 
     public function getId(): ?int
@@ -187,6 +194,24 @@ private Collection $payments;
         if (!$this->payments->contains($payment)) {
             $this->payments->add($payment);
             $payment->setCustomerOrder($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, OrderItem>
+     */
+    public function getOrderItems(): Collection
+    {
+        return $this->orderItems;
+    }
+
+    public function addOrderItem(OrderItem $orderItem): static
+    {
+        if (!$this->orderItems->contains($orderItem)) {
+            $this->orderItems->add($orderItem);
+            $orderItem->setCustomerOrder($this);
         }
 
         return $this;
