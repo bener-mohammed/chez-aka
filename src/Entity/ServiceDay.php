@@ -55,6 +55,9 @@ class ServiceDay
     #[ORM\OneToMany(targetEntity: CustomerOrder::class, mappedBy: 'serviceDay')]
     private Collection $customerOrders;
 
+    #[ORM\OneToOne(mappedBy: 'serviceDay')]
+    private ?RestaurantEvent $restaurantEvent = null;
+
     public function __construct()
     {
         $this->createdAt = new \DateTimeImmutable();
@@ -126,7 +129,7 @@ class ServiceDay
 
         return $this;
     }
-    
+
     public function isClickCollectEnabled(): bool
     {
         return $this->clickCollectEnabled;
@@ -201,6 +204,23 @@ class ServiceDay
             $this->customerOrders->add($customerOrder);
             $customerOrder->setServiceDay($this);
         }
+
+        return $this;
+    }
+
+    public function getRestaurantEvent(): ?RestaurantEvent
+    {
+        return $this->restaurantEvent;
+    }
+
+    public function setRestaurantEvent(RestaurantEvent $restaurantEvent): static
+    {
+        // set the owning side of the relation if necessary
+        if ($restaurantEvent->getServiceDay() !== $this) {
+            $restaurantEvent->setServiceDay($this);
+        }
+
+        $this->restaurantEvent = $restaurantEvent;
 
         return $this;
     }
