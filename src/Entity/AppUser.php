@@ -2,13 +2,15 @@
 
 namespace App\Entity;
 
+use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
+use Symfony\Component\Security\Core\User\UserInterface;
 use App\Repository\AppUserRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: AppUserRepository::class)]
-class AppUser
+class AppUser implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -214,4 +216,21 @@ class AppUser
 
         return $this;
     }
+
+    public function getUserIdentifier(): string
+    {
+        return (string) $this->email;
+    }
+
+    public function getRoles(): array
+    {
+        return [$this->role];
+    }
+
+    public function getPassword(): ?string
+    {
+        return $this->passwordHash;
+    }
+
+    public function eraseCredentials(): void {}
 }

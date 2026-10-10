@@ -1,0 +1,17 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Administration - Chez Aka{% endblock %}
+
+{% block body %}
+    <h1>Administration Chez Aka</h1>
+
+    <p>
+        Bienvenue {{ app.user.firstName }} {{ app.user.lastName }}.
+    </p>
+
+    <p>
+        Connecté avec : {{ app.user.userIdentifier }}
+    </p>
+
+    <a href="{{ path('app_logout') }}">Se déconnecter</a>
+{% endblock %}
