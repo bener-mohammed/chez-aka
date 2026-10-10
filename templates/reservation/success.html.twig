@@ -1,0 +1,22 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Demande envoyée - Chez Aka{% endblock %}
+
+{% block body %}
+    <main>
+        <h1>Demande de réservation envoyée</h1>
+
+        <p>
+            Votre demande a bien été enregistrée.
+        </p>
+
+        <p>
+            Elle n’est pas encore confirmée.
+            Chez Aka doit d’abord la valider.
+        </p>
+
+        <a href="{{ path('app_reservation') }}">
+            Faire une autre réservation
+        </a>
+    </main>
+{% endblock %}

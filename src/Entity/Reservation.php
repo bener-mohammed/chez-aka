@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Repository\ReservationRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: ReservationRepository::class)]
 class Reservation
@@ -15,33 +16,69 @@ class Reservation
     private ?int $id = null;
 
     #[ORM\Column(length: 100)]
+    #[Assert\NotBlank(message: 'Le prénom est obligatoire.')]
+    #[Assert\Length(
+        max: 100,
+        maxMessage: 'Le prénom ne peut pas dépasser {{ limit }} caractères.'
+    )]
     private ?string $firstName = null;
 
     #[ORM\Column(length: 100)]
+    #[Assert\NotBlank(message: 'Le nom est obligatoire.')]
+    #[Assert\Length(
+        max: 100,
+        maxMessage: 'Le nom ne peut pas dépasser {{ limit }} caractères.'
+    )]
     private ?string $lastName = null;
 
     #[ORM\Column(length: 180)]
+    #[Assert\NotBlank(message: 'L’adresse email est obligatoire.')]
+    #[Assert\Email(message: 'L’adresse email n’est pas valide.')]
+    #[Assert\Length(
+        max: 180,
+        maxMessage: 'L’adresse email ne peut pas dépasser {{ limit }} caractères.'
+    )]
     private ?string $email = null;
 
     #[ORM\Column(length: 20)]
+    #[Assert\NotBlank(message: 'Le numéro de téléphone est obligatoire.')]
+    #[Assert\Length(
+        max: 20,
+        maxMessage: 'Le numéro de téléphone est trop long.'
+    )]
     private ?string $phoneNumber = null;
 
     #[ORM\Column(type: Types::TIME_IMMUTABLE)]
+    #[Assert\NotNull(message: 'L’heure de réservation est obligatoire.')]
     private ?\DateTimeImmutable $reservationTime = null;
 
     #[ORM\Column]
+    #[Assert\NotNull(message: 'Le nombre de personnes est obligatoire.')]
+    #[Assert\Positive(message: 'Le nombre de personnes doit être supérieur à 0.')]
     private ?int $partySize = null;
 
     #[ORM\Column(length: 20)]
+    #[Assert\Choice(
+        choices: ['INDOOR', 'TERRACE', 'NO_PREFERENCE'],
+        message: 'La préférence de zone sélectionnée n’est pas valide.'
+    )]
     private string $areaPreference = 'NO_PREFERENCE';
 
     #[ORM\Column(length: 20, nullable: true)]
+    #[Assert\Choice(
+        choices: ['INDOOR', 'TERRACE'],
+        message: 'La zone confirmée n’est pas valide.'
+    )]
     private ?string $confirmedArea = null;
 
     #[ORM\Column(length: 20)]
     private string $status = 'PENDING';
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
+    #[Assert\Length(
+        max: 1000,
+        maxMessage: 'La demande spéciale ne peut pas dépasser {{ limit }} caractères.'
+    )]
     private ?string $specialRequest = null;
 
     #[ORM\Column]

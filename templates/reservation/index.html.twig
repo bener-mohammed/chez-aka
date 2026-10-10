@@ -1,0 +1,33 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Réserver une table - Chez Aka{% endblock %}
+
+{% block body %}
+    <main>
+        <h1>Réserver une table</h1>
+
+        <p>
+            Les réservations sont soumises à confirmation par Chez Aka.
+        </p>
+
+        {{ form_start(form) }}
+
+            {{ form_row(form.serviceDay) }}
+            {{ form_row(form.reservationTime) }}
+            {{ form_row(form.partySize) }}
+            {{ form_row(form.areaPreference) }}
+
+            {{ form_row(form.firstName) }}
+            {{ form_row(form.lastName) }}
+            {{ form_row(form.email) }}
+            {{ form_row(form.phoneNumber) }}
+
+            {{ form_row(form.specialRequest) }}
+
+            <button type="submit">
+                Envoyer ma demande
+            </button>
+
+        {{ form_end(form) }}
+    </main>
+{% endblock %}

@@ -1,0 +1,147 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Réservations - Administration Chez Aka{% endblock %}
+
+{% block body %}
+    <main>
+        <h1>Réservations</h1>
+
+        {% for label, messages in app.flashes %}
+            {% for message in messages %}
+                <div class="alert alert-{{ label }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endfor %}
+
+        {% if reservations is empty %}
+            <p>Aucune réservation pour le moment.</p>
+        {% else %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Heure</th>
+                        <th>Client</th>
+                        <th>Personnes</th>
+                        <th>Préférence</th>
+                        <th>Zone confirmée</th>
+                        <th>Statut</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for reservation in reservations %}
+                        <tr>
+                            <td>
+                                {{ reservation.serviceDay.serviceDate|date('d/m/Y') }}
+                            </td>
+
+                            <td>
+                                {{ reservation.reservationTime|date('H:i') }}
+                            </td>
+
+                            <td>
+                                {{ reservation.firstName }}
+                                {{ reservation.lastName }}
+                            </td>
+
+                            <td>
+                                {{ reservation.partySize }}
+                            </td>
+
+                            <td>
+                                {% if reservation.areaPreference == 'INDOOR' %}
+                                    Intérieur
+                                {% elseif reservation.areaPreference == 'TERRACE' %}
+                                    Terrasse
+                                {% else %}
+                                    Sans préférence
+                                {% endif %}
+                            </td>
+
+                            <td>
+                                {% if reservation.confirmedArea == 'INDOOR' %}
+                                    Intérieur
+                                {% elseif reservation.confirmedArea == 'TERRACE' %}
+                                    Terrasse
+                                {% else %}
+                                    —
+                                {% endif %}
+                            </td>
+
+                            <td>
+                                {% if reservation.status == 'PENDING' %}
+                                    En attente
+                                {% elseif reservation.status == 'CONFIRMED' %}
+                                    Confirmée
+                                {% elseif reservation.status == 'REFUSED' %}
+                                    Refusée
+                                {% else %}
+                                    {{ reservation.status }}
+                                {% endif %}
+                            </td>
+
+                            <td>
+                                {% if reservation.status == 'PENDING' %}
+
+                                    <form
+                                        method="post"
+                                        action="{{ path(
+                                            'app_admin_reservation_confirm',
+                                            { id: reservation.id }
+                                        ) }}"
+                                    >
+                                        <select name="confirmed_area" required>
+                                            <option value="">
+                                                Choisir une zone
+                                            </option>
+                                            <option value="INDOOR">
+                                                Intérieur
+                                            </option>
+                                            <option value="TERRACE">
+                                                Terrasse
+                                            </option>
+                                        </select>
+
+                                        <input
+                                            type="hidden"
+                                            name="_token"
+                                            value="{{ csrf_token('confirm' ~ reservation.id) }}"
+                                        >
+
+                                        <button type="submit">
+                                            Confirmer
+                                        </button>
+                                    </form>
+
+                                    <form
+                                        method="post"
+                                        action="{{ path(
+                                            'app_admin_reservation_refuse',
+                                            { id: reservation.id }
+                                        ) }}"
+                                    >
+                                        <input
+                                            type="hidden"
+                                            name="_token"
+                                            value="{{ csrf_token('refuse' ~ reservation.id) }}"
+                                        >
+
+                                        <button type="submit">
+                                            Refuser
+                                        </button>
+                                    </form>
+
+                                {% else %}
+                                    Déjà traitée
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% endif %}
+    </main>
+{% endblock %}
