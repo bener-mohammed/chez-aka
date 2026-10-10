@@ -1,0 +1,58 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}ServiceDay{% endblock %}
+
+{% block body %}
+    <h1>ServiceDay</h1>
+
+    <table class="table">
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ service_day.id }}</td>
+            </tr>
+            <tr>
+                <th>ServiceDate</th>
+                <td>{{ service_day.serviceDate ? service_day.serviceDate|date('Y-m-d') : '' }}</td>
+            </tr>
+            <tr>
+                <th>IsOpen</th>
+                <td>{{ service_day.isOpen ? 'Yes' : 'No' }}</td>
+            </tr>
+            <tr>
+                <th>IndoorCapacity</th>
+                <td>{{ service_day.indoorCapacity }}</td>
+            </tr>
+            <tr>
+                <th>TerraceCapacity</th>
+                <td>{{ service_day.terraceCapacity }}</td>
+            </tr>
+            <tr>
+                <th>MaxOnlinePartySize</th>
+                <td>{{ service_day.maxOnlinePartySize }}</td>
+            </tr>
+            <tr>
+                <th>ClickCollectEnabled</th>
+                <td>{{ service_day.clickCollectEnabled ? 'Yes' : 'No' }}</td>
+            </tr>
+            <tr>
+                <th>ClickCollectOrderLimit</th>
+                <td>{{ service_day.clickCollectOrderLimit }}</td>
+            </tr>
+            <tr>
+                <th>CreatedAt</th>
+                <td>{{ service_day.createdAt ? service_day.createdAt|date('Y-m-d H:i:s') : '' }}</td>
+            </tr>
+            <tr>
+                <th>UpdatedAt</th>
+                <td>{{ service_day.updatedAt ? service_day.updatedAt|date('Y-m-d H:i:s') : '' }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_service_day_index') }}">back to list</a>
+
+    <a href="{{ path('app_service_day_edit', {'id': service_day.id}) }}">edit</a>
+
+    {{ include('service_day/_delete_form.html.twig') }}
+{% endblock %}

@@ -7,6 +7,13 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Validator\Constraints as Assert;
+
+#[UniqueEntity(
+    fields: ['serviceDate'],
+    message: 'Un jour de service existe déjà pour cette date.'
+)]
 
 #[ORM\Entity(repositoryClass: ServiceDayRepository::class)]
 class ServiceDay
@@ -17,24 +24,43 @@ class ServiceDay
     private ?int $id = null;
 
     #[ORM\Column(type: Types::DATE_IMMUTABLE, unique: true)]
+    #[Assert\NotNull(message: 'La date du service est obligatoire.')]
     private ?\DateTimeImmutable $serviceDate = null;
 
     #[ORM\Column(options: ['default' => true])]
     private bool $isOpen = true;
 
     #[ORM\Column(options: ['default' => 25])]
+    #[Assert\Range(
+        min: 0,
+        max: 25,
+        notInRangeMessage: 'La capacité intérieure doit être comprise entre {{ min }} et {{ max }} personnes.'
+    )]
     private int $indoorCapacity = 25;
 
     #[ORM\Column(options: ['default' => 14])]
+    #[Assert\Range(
+        min: 0,
+        max: 14,
+        notInRangeMessage: 'La capacité terrasse doit être comprise entre {{ min }} et {{ max }} personnes.'
+    )]
     private int $terraceCapacity = 14;
 
     #[ORM\Column(options: ['default' => 12])]
+    #[Assert\Range(
+        min: 1,
+        max: 12,
+        notInRangeMessage: 'Une réservation en ligne doit être limitée entre {{ min }} et {{ max }} personnes.'
+    )]
     private int $maxOnlinePartySize = 12;
 
     #[ORM\Column(options: ['default' => true])]
     private bool $clickCollectEnabled = true;
 
     #[ORM\Column(nullable: true)]
+    #[Assert\Positive(
+        message: 'La limite de commandes doit être supérieure à 0.'
+    )]
     private ?int $clickCollectOrderLimit = null;
 
     #[ORM\Column]
