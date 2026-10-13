@@ -43,7 +43,25 @@ class ProductRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult();
     }
-    
+
+    public function findAvailableForClickCollect(): array
+    {
+        return $this->createQueryBuilder('p')
+            ->innerJoin('p.category', 'c')
+            ->addSelect('c')
+            ->andWhere('p.isAvailable = :available')
+            ->andWhere('p.isClickCollect = :clickCollect')
+            ->andWhere('c.isActive = :active')
+            ->setParameter('available', true)
+            ->setParameter('clickCollect', true)
+            ->setParameter('active', true)
+            ->orderBy('c.displayOrder', 'ASC')
+            ->addOrderBy('p.displayOrder', 'ASC')
+            ->addOrderBy('p.name', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
+
     //    /**
     //     * @return Product[] Returns an array of Product objects
     //     */

@@ -1,0 +1,64 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Click & Collect - Chez Aka{% endblock %}
+
+{% block body %}
+    <main>
+        <h1>Click & Collect</h1>
+
+        <p>
+            Commandez vos plats en ligne et récupérez votre commande
+            directement chez Chez Aka.
+        </p>
+
+        <p>
+            Retrait disponible les jours d'ouverture,
+            entre 20h00 et 22h30.
+        </p>
+
+        <p>
+            Un compte client sera nécessaire pour passer commande.
+        </p>
+
+        {% if products_by_category is empty %}
+            <p>
+                Aucun produit n'est actuellement disponible
+                en Click & Collect.
+            </p>
+        {% else %}
+
+            {% for section in products_by_category %}
+                <section>
+                    <h2>
+                        {{ section.category.name }}
+                    </h2>
+
+                    {% for product in section.products %}
+                        <article>
+                            <h3>
+                                {{ product.name }}
+                            </h3>
+
+                            {% if product.description %}
+                                <p>
+                                    {{ product.description }}
+                                </p>
+                            {% endif %}
+
+                            <p>
+                                <strong>
+                                    {{ product.price|number_format(2, ',', ' ') }} €
+                                </strong>
+                            </p>
+
+                            <button type="button">
+                                Ajouter au panier
+                            </button>
+                        </article>
+                    {% endfor %}
+                </section>
+            {% endfor %}
+
+        {% endif %}
+    </main>
+{% endblock %}
