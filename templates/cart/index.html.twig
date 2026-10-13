@@ -1,0 +1,154 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mon panier - Chez Aka{% endblock %}
+
+{% block body %}
+    <main>
+        <h1>Mon panier</h1>
+
+        {% for label, messages in app.flashes %}
+            {% for message in messages %}
+                <div class="alert alert-{{ label }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endfor %}
+
+        {% if cart.items is empty %}
+
+            <p>Votre panier est vide.</p>
+
+            <p>
+                <a href="{{ path('app_click_collect') }}">
+                    Voir les produits Click & Collect
+                </a>
+            </p>
+
+        {% else %}
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Produit</th>
+                        <th>Prix unitaire</th>
+                        <th>Quantité</th>
+                        <th>Total</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for item in cart.items %}
+                        <tr>
+                            <td>
+                                {{ item.product.name }}
+                            </td>
+
+                            <td>
+                                {{ item.product.price
+                                    |number_format(2, ',', ' ')
+                                }} €
+                            </td>
+
+                            <td>
+                                <form
+                                    method="post"
+                                    action="{{ path(
+                                        'app_cart_update',
+                                        { id: item.product.id }
+                                    ) }}"
+                                >
+                                    <input
+                                        type="hidden"
+                                        name="_token"
+                                        value="{{ csrf_token(
+                                            'cart_update_' ~ item.product.id
+                                        ) }}"
+                                    >
+
+                                    <input
+                                        type="number"
+                                        name="quantity"
+                                        value="{{ item.quantity }}"
+                                        min="1"
+                                        required
+                                    >
+
+                                    <button type="submit">
+                                        Modifier
+                                    </button>
+                                </form>
+                            </td>
+
+                            <td>
+                                {{ item.lineTotal
+                                    |number_format(2, ',', ' ')
+                                }} €
+                            </td>
+
+                            <td>
+                                <form
+                                    method="post"
+                                    action="{{ path(
+                                        'app_cart_remove',
+                                        { id: item.product.id }
+                                    ) }}"
+                                >
+                                    <input
+                                        type="hidden"
+                                        name="_token"
+                                        value="{{ csrf_token(
+                                            'cart_remove_' ~ item.product.id
+                                        ) }}"
+                                    >
+
+                                    <button type="submit">
+                                        Supprimer
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+            <p>
+                Nombre d'articles :
+                <strong>
+                    {{ cart.totalQuantity }}
+                </strong>
+            </p>
+
+            <p>
+                Total :
+                <strong>
+                    {{ cart.totalAmount
+                        |number_format(2, ',', ' ')
+                    }} €
+                </strong>
+            </p>
+
+            <p>
+                <a href="{{ path('app_click_collect') }}">
+                    Continuer mes achats
+                </a>
+            </p>
+
+            <form
+                method="post"
+                action="{{ path('app_cart_clear') }}"
+            >
+                <input
+                    type="hidden"
+                    name="_token"
+                    value="{{ csrf_token('cart_clear') }}"
+                >
+
+                <button type="submit">
+                    Vider le panier
+                </button>
+            </form>
+
+        {% endif %}
+    </main>
+{% endblock %}

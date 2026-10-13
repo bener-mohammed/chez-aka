@@ -5,7 +5,11 @@
 {% block body %}
     <main>
         <h1>Click & Collect</h1>
-
+        <p>
+            <a href="{{ path('app_cart_index') }}">
+                Voir mon panier
+            </a>
+        </p>
         <p>
             Commandez vos plats en ligne et récupérez votre commande
             directement chez Chez Aka.
@@ -51,9 +55,20 @@
                                 </strong>
                             </p>
 
-                            <button type="button">
-                                Ajouter au panier
-                            </button>
+                            <form
+                                method="post"
+                                action="{{ path('app_cart_add', { id: product.id }) }}"
+                            >
+                                <input
+                                    type="hidden"
+                                    name="_token"
+                                    value="{{ csrf_token('cart_add_' ~ product.id) }}"
+                                >
+
+                                <button type="submit">
+                                    Ajouter au panier
+                                </button>
+                            </form>
                         </article>
                     {% endfor %}
                 </section>
