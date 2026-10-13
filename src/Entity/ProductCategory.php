@@ -6,6 +6,13 @@ use App\Repository\ProductCategoryRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Validator\Constraints as Assert;
+
+#[UniqueEntity(
+    fields: ['name'],
+    message: 'Une catégorie avec ce nom existe déjà.'
+)]
 
 #[ORM\Entity(repositoryClass: ProductCategoryRepository::class)]
 class ProductCategory
@@ -16,9 +23,17 @@ class ProductCategory
     private ?int $id = null;
 
     #[ORM\Column(length: 100, unique: true)]
+    #[Assert\NotBlank(message: 'Le nom de la catégorie est obligatoire.')]
+    #[Assert\Length(
+        max: 100,
+        maxMessage: 'Le nom de la catégorie ne peut pas dépasser {{ limit }} caractères.'
+    )]
     private ?string $name = null;
 
     #[ORM\Column(options: ['default' => 0])]
+    #[Assert\PositiveOrZero(
+        message: 'L’ordre d’affichage doit être supérieur ou égal à 0.'
+    )]
     private int $displayOrder = 0;
 
     #[ORM\Column(options: ['default' => true])]

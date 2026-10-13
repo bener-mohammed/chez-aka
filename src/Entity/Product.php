@@ -7,6 +7,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: ProductRepository::class)]
 class Product
@@ -17,12 +18,25 @@ class Product
     private ?int $id = null;
 
     #[ORM\Column(length: 150)]
+    #[Assert\NotBlank(message: 'Le nom du produit est obligatoire.')]
+    #[Assert\Length(
+        max: 150,
+        maxMessage: 'Le nom du produit ne peut pas dépasser {{ limit }} caractères.'
+    )]
     private ?string $name = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
+    #[Assert\Length(
+        max: 2000,
+        maxMessage: 'La description ne peut pas dépasser {{ limit }} caractères.'
+    )]
     private ?string $description = null;
 
     #[ORM\Column(type: Types::DECIMAL, precision: 10, scale: 2)]
+    #[Assert\NotBlank(message: 'Le prix est obligatoire.')]
+    #[Assert\PositiveOrZero(
+        message: 'Le prix doit être supérieur ou égal à 0.'
+    )]
     private ?string $price = null;
 
     #[ORM\Column(options: ['default' => true])]
@@ -32,6 +46,9 @@ class Product
     private bool $isClickCollect = false;
 
     #[ORM\Column(options: ['default' => 0])]
+    #[Assert\PositiveOrZero(
+        message: 'L’ordre d’affichage doit être supérieur ou égal à 0.'
+    )]
     private int $displayOrder = 0;
 
     #[ORM\Column]
@@ -47,6 +64,7 @@ class Product
         nullable: false,
         onDelete: 'RESTRICT'
     )]
+    #[Assert\NotNull(message: 'La catégorie est obligatoire.')]
     private ?ProductCategory $category = null;
 
     /**

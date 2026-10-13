@@ -1,0 +1,95 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Produits - Administration Chez Aka{% endblock %}
+
+{% block body %}
+    <main>
+        <h1>Produits</h1>
+
+        {% for label, messages in app.flashes %}
+            {% for message in messages %}
+                <div class="alert alert-{{ label }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endfor %}
+
+        <p>
+            <a href="{{ path('app_product_new') }}">
+                Ajouter un produit
+            </a>
+        </p>
+
+        {% if products is empty %}
+            <p>Aucun produit pour le moment.</p>
+        {% else %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>Nom</th>
+                        <th>Catégorie</th>
+                        <th>Prix</th>
+                        <th>Disponible</th>
+                        <th>Click & Collect</th>
+                        <th>Ordre</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for product in products %}
+                        <tr>
+                            <td>
+                                {{ product.name }}
+                            </td>
+
+                            <td>
+                                {{ product.category.name }}
+                            </td>
+
+                            <td>
+                                {{ product.price|number_format(2, ',', ' ') }} €
+                            </td>
+
+                            <td>
+                                {% if product.isAvailable %}
+                                    Oui
+                                {% else %}
+                                    Non
+                                {% endif %}
+                            </td>
+
+                            <td>
+                                {% if product.isClickCollect %}
+                                    Oui
+                                {% else %}
+                                    Non
+                                {% endif %}
+                            </td>
+
+                            <td>
+                                {{ product.displayOrder }}
+                            </td>
+
+                            <td>
+                                <a href="{{ path(
+                                    'app_product_show',
+                                    { id: product.id }
+                                ) }}">
+                                    Voir
+                                </a>
+
+                                <a href="{{ path(
+                                    'app_product_edit',
+                                    { id: product.id }
+                                ) }}">
+                                    Modifier
+                                </a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% endif %}
+    </main>
+{% endblock %}
