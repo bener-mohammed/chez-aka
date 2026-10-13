@@ -1,0 +1,43 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}La carte - Chez Aka{% endblock %}
+
+{% block body %}
+    <main>
+        <h1>La carte</h1>
+
+        {% if menu_by_category is empty %}
+            <p>La carte sera bientôt disponible.</p>
+        {% else %}
+
+            {% for section in menu_by_category %}
+                <section>
+                    <h2>
+                        {{ section.category.name }}
+                    </h2>
+
+                    {% for product in section.products %}
+                        <article>
+                            <h3>
+                                {{ product.name }}
+                            </h3>
+
+                            {% if product.description %}
+                                <p>
+                                    {{ product.description }}
+                                </p>
+                            {% endif %}
+
+                            <p>
+                                <strong>
+                                    {{ product.price|number_format(2, ',', ' ') }} €
+                                </strong>
+                            </p>
+                        </article>
+                    {% endfor %}
+                </section>
+            {% endfor %}
+
+        {% endif %}
+    </main>
+{% endblock %}
