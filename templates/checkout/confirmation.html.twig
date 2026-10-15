@@ -1,0 +1,61 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    Commande enregistrée - Chez Aka
+{% endblock %}
+
+{% block body %}
+    <main>
+        <h1>Commande enregistrée</h1>
+
+        <p>
+            Votre commande a bien été créée.
+        </p>
+
+        <p>
+            Numéro de commande :
+            <strong>
+                {{ order.orderNumber }}
+            </strong>
+        </p>
+
+        <p>
+            Date de retrait :
+            <strong>
+                {{ order.serviceDay.serviceDate
+                    |date('d/m/Y')
+                }}
+            </strong>
+        </p>
+
+        <p>
+            Heure de retrait :
+            <strong>
+                {{ order.pickupTime
+                    |date('H:i')
+                }}
+            </strong>
+        </p>
+
+        <p>
+            Total :
+            <strong>
+                {{ order.totalAmount
+                    |number_format(2, ',', ' ')
+                }} €
+            </strong>
+        </p>
+
+        <p>
+            Statut :
+            <strong>
+                Paiement en attente
+            </strong>
+        </p>
+
+        <p>
+            La commande devra être payée
+            par carte avant d'être confirmée.
+        </p>
+    </main>
+{% endblock %}

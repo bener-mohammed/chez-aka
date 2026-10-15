@@ -1,0 +1,72 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    Valider ma commande - Chez Aka
+{% endblock %}
+
+{% block body %}
+    <main>
+        <h1>Valider ma commande</h1>
+
+        {% for label, messages in app.flashes %}
+            {% for message in messages %}
+                <div class="alert alert-{{ label }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endfor %}
+
+        <section>
+            <h2>Récapitulatif</h2>
+
+            {% for item in cart.items %}
+                <p>
+                    {{ item.product.name }}
+                    × {{ item.quantity }}
+                    —
+                    {{ item.lineTotal
+                        |number_format(2, ',', ' ')
+                    }} €
+                </p>
+            {% endfor %}
+
+            <p>
+                <strong>
+                    Total :
+                    {{ cart.totalAmount
+                        |number_format(2, ',', ' ')
+                    }} €
+                </strong>
+            </p>
+        </section>
+
+        <section>
+            <h2>Retrait</h2>
+
+            {{ form_start(checkoutForm) }}
+
+                {{ form_row(
+                    checkoutForm.serviceDay
+                ) }}
+
+                {{ form_row(
+                    checkoutForm.pickupTime
+                ) }}
+
+                {{ form_row(
+                    checkoutForm.specialRequest
+                ) }}
+
+                <button type="submit">
+                    Créer ma commande
+                </button>
+
+            {{ form_end(checkoutForm) }}
+        </section>
+
+        <p>
+            Le paiement par carte sera nécessaire
+            pour confirmer définitivement la commande.
+        </p>
+    </main>
+{% endblock %}

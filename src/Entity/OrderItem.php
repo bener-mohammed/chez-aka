@@ -5,15 +5,22 @@ namespace App\Entity;
 use App\Repository\OrderItemRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: OrderItemRepository::class)]
 class OrderItem
 {
 
     #[ORM\Column]
+    #[Assert\NotNull]
+    #[Assert\Positive(
+        message: 'La quantité doit être supérieure à zéro.'
+    )]
     private ?int $quantity = null;
 
     #[ORM\Column(type: Types::DECIMAL, precision: 10, scale: 2)]
+    #[Assert\NotNull]
+    #[Assert\PositiveOrZero]
     private ?string $unitPrice = null;
 
     #[ORM\Id]

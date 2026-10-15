@@ -7,72 +7,95 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: CustomerOrderRepository::class)]
 class CustomerOrder
 {
-#[ORM\Id]
-#[ORM\GeneratedValue]
-#[ORM\Column(name: 'order_id')]
-private ?int $id = null;
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column(name: 'order_id')]
+    private ?int $id = null;
 
-#[ORM\Column(length: 30, unique: true)]
-private ?string $orderNumber = null;
+    #[ORM\Column(length: 30, unique: true)]
+    #[Assert\NotBlank]
+    #[Assert\Length(max: 30)]
+    private ?string $orderNumber = null;
 
     #[ORM\Column(type: Types::TIME_IMMUTABLE)]
+    #[Assert\NotNull(message: 'L’heure de retrait est obligatoire.')]
     private ?\DateTimeImmutable $pickupTime = null;
 
-#[ORM\Column(length: 30)]
-private string $status = 'PENDING_PAYMENT';
+    #[ORM\Column(length: 30)]
+    #[Assert\Choice(
+        choices: [
+            'PENDING_PAYMENT',
+            'CONFIRMED',
+            'PREPARING',
+            'READY',
+            'COLLECTED',
+            'CANCELLED',
+        ],
+        message: 'Statut de commande invalide.'
+    )]
+    private string $status = 'PENDING_PAYMENT';
 
     #[ORM\Column(type: Types::DECIMAL, precision: 10, scale: 2)]
+    #[Assert\NotNull]
+    #[Assert\PositiveOrZero]
     private ?string $totalAmount = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
+    #[Assert\Length(
+        max: 1000,
+        maxMessage: 'La demande spéciale ne peut pas dépasser {{ limit }} caractères.'
+    )]
     private ?string $specialRequest = null;
 
-#[ORM\Column]
-private \DateTimeImmutable $createdAt;
+    #[ORM\Column]
+    private \DateTimeImmutable $createdAt;
 
     #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $updatedAt = null;
 
-#[ORM\ManyToOne(inversedBy: 'customerOrders')]
-#[ORM\JoinColumn(
-    name: 'service_day_id',
-    referencedColumnName: 'service_day_id',
-    nullable: false,
-    onDelete: 'RESTRICT'
-)]
-private ?ServiceDay $serviceDay = null;
+    #[ORM\ManyToOne(inversedBy: 'customerOrders')]
+    #[ORM\JoinColumn(
+        name: 'service_day_id',
+        referencedColumnName: 'service_day_id',
+        nullable: false,
+        onDelete: 'RESTRICT'
+    )]
+    #[Assert\NotNull]
+    private ?ServiceDay $serviceDay = null;
 
-#[ORM\ManyToOne(inversedBy: 'customerOrders')]
-#[ORM\JoinColumn(
-    name: 'user_id',
-    referencedColumnName: 'user_id',
-    nullable: false,
-    onDelete: 'RESTRICT'
-)]
-private ?AppUser $user = null;
+    #[ORM\ManyToOne(inversedBy: 'customerOrders')]
+    #[ORM\JoinColumn(
+        name: 'user_id',
+        referencedColumnName: 'user_id',
+        nullable: false,
+        onDelete: 'RESTRICT'
+    )]
+    #[Assert\NotNull]
+    private ?AppUser $user = null;
 
-/**
- * @var Collection<int, Payment>
- */
-#[ORM\OneToMany(targetEntity: Payment::class, mappedBy: 'customerOrder')]
-private Collection $payments;
+    /**
+     * @var Collection<int, Payment>
+     */
+    #[ORM\OneToMany(targetEntity: Payment::class, mappedBy: 'customerOrder')]
+    private Collection $payments;
 
-/**
- * @var Collection<int, OrderItem>
- */
-#[ORM\OneToMany(targetEntity: OrderItem::class, mappedBy: 'customerOrder')]
-private Collection $orderItems;
+    /**
+     * @var Collection<int, OrderItem>
+     */
+    #[ORM\OneToMany(targetEntity: OrderItem::class, mappedBy: 'customerOrder')]
+    private Collection $orderItems;
 
     public function __construct()
-{
-    $this->createdAt = new \DateTimeImmutable();
-    $this->payments = new ArrayCollection();
-    $this->orderItems = new ArrayCollection();
-}
+    {
+        $this->createdAt = new \DateTimeImmutable();
+        $this->payments = new ArrayCollection();
+        $this->orderItems = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {

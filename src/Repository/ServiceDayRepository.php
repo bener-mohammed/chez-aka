@@ -16,28 +16,44 @@ class ServiceDayRepository extends ServiceEntityRepository
         parent::__construct($registry, ServiceDay::class);
     }
 
-//    /**
-//     * @return ServiceDay[] Returns an array of ServiceDay objects
-//     */
-//    public function findByExampleField($value): array
-//    {
-//        return $this->createQueryBuilder('s')
-//            ->andWhere('s.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->orderBy('s.id', 'ASC')
-//            ->setMaxResults(10)
-//            ->getQuery()
-//            ->getResult()
-//        ;
-//    }
+    public function createClickCollectAvailableQueryBuilder()
+    {
+        return $this->createQueryBuilder('s')
+            ->andWhere('s.isOpen = :open')
+            ->andWhere('s.clickCollectEnabled = :enabled')
+            ->andWhere('s.serviceDate >= :today')
+            ->setParameter('open', true)
+            ->setParameter('enabled', true)
+            ->setParameter(
+                'today',
+                new \DateTimeImmutable('today')
+            )
+            ->orderBy('s.serviceDate', 'ASC');
+    }
 
-//    public function findOneBySomeField($value): ?ServiceDay
-//    {
-//        return $this->createQueryBuilder('s')
-//            ->andWhere('s.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->getQuery()
-//            ->getOneOrNullResult()
-//        ;
-//    }
+
+    //    /**
+    //     * @return ServiceDay[] Returns an array of ServiceDay objects
+    //     */
+    //    public function findByExampleField($value): array
+    //    {
+    //        return $this->createQueryBuilder('s')
+    //            ->andWhere('s.exampleField = :val')
+    //            ->setParameter('val', $value)
+    //            ->orderBy('s.id', 'ASC')
+    //            ->setMaxResults(10)
+    //            ->getQuery()
+    //            ->getResult()
+    //        ;
+    //    }
+
+    //    public function findOneBySomeField($value): ?ServiceDay
+    //    {
+    //        return $this->createQueryBuilder('s')
+    //            ->andWhere('s.exampleField = :val')
+    //            ->setParameter('val', $value)
+    //            ->getQuery()
+    //            ->getOneOrNullResult()
+    //        ;
+    //    }
 }
