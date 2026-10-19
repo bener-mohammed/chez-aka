@@ -1,0 +1,62 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    Événements - Chez Aka
+{% endblock %}
+
+{% block body %}
+    <main>
+        <h1>Événements</h1>
+
+        <p>
+            Découvrez les prochains concerts
+            et événements spéciaux de Chez Aka.
+        </p>
+
+        {% if events is empty %}
+            <p>
+                Aucun événement spécial annoncé pour le moment.
+            </p>
+        {% else %}
+
+            {% for event in events %}
+                <article>
+                    {% if event.imagePath %}
+                        <img
+                            src="{{ event.imagePath }}"
+                            alt="Affiche de {{ event.title }}"
+                        >
+                    {% endif %}
+
+                    <h2>
+                        {{ event.title }}
+                    </h2>
+
+                    <p>
+                        <strong>
+                            {{ event.startDatetime|date('d/m/Y') }}
+                        </strong>
+
+                        à
+
+                        <strong>
+                            {{ event.startDatetime|date('H:i') }}
+                        </strong>
+
+                        {% if event.endDatetime %}
+                            — fin prévue à
+                            {{ event.endDatetime|date('H:i') }}
+                        {% endif %}
+                    </p>
+
+                    {% if event.description %}
+                        <p>
+                            {{ event.description }}
+                        </p>
+                    {% endif %}
+                </article>
+            {% endfor %}
+
+        {% endif %}
+    </main>
+{% endblock %}

@@ -1,0 +1,94 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    Événements - Administration Chez Aka
+{% endblock %}
+
+{% block body %}
+    <main>
+        <h1>Événements spéciaux</h1>
+
+        {% for label, messages in app.flashes %}
+            {% for message in messages %}
+                <div class="alert alert-{{ label }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endfor %}
+
+        <p>
+            <a href="{{ path('app_restaurant_event_new') }}">
+                Ajouter un événement
+            </a>
+        </p>
+
+        {% if restaurant_events is empty %}
+            <p>
+                Aucun événement enregistré.
+            </p>
+        {% else %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>Titre</th>
+                        <th>Jour</th>
+                        <th>Début</th>
+                        <th>Fin</th>
+                        <th>Publié</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for event in restaurant_events %}
+                        <tr>
+                            <td>
+                                {{ event.title }}
+                            </td>
+
+                            <td>
+                                {{ event.serviceDay.serviceDate|date('d/m/Y') }}
+                            </td>
+
+                            <td>
+                                {{ event.startDatetime|date('d/m/Y H:i') }}
+                            </td>
+
+                            <td>
+                                {% if event.endDatetime %}
+                                    {{ event.endDatetime|date('d/m/Y H:i') }}
+                                {% else %}
+                                    —
+                                {% endif %}
+                            </td>
+
+                            <td>
+                                {% if event.isPublished %}
+                                    Oui
+                                {% else %}
+                                    Non
+                                {% endif %}
+                            </td>
+
+                            <td>
+                                <a href="{{ path(
+                                    'app_restaurant_event_show',
+                                    { id: event.id }
+                                ) }}">
+                                    Voir
+                                </a>
+
+                                <a href="{{ path(
+                                    'app_restaurant_event_edit',
+                                    { id: event.id }
+                                ) }}">
+                                    Modifier
+                                </a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% endif %}
+    </main>
+{% endblock %}
