@@ -33,4 +33,18 @@ class CustomerOrderRepository extends ServiceEntityRepository
             ->getQuery()
             ->getSingleScalarResult();
     }
+
+    public function findForAdmin(): array
+    {
+        return $this->createQueryBuilder('o')
+            ->addSelect('s')
+            ->addSelect('u')
+            ->innerJoin('o.serviceDay', 's')
+            ->innerJoin('o.user', 'u')
+            ->orderBy('s.serviceDate', 'DESC')
+            ->addOrderBy('o.pickupTime', 'ASC')
+            ->addOrderBy('o.createdAt', 'DESC')
+            ->getQuery()
+            ->getResult();
+    }
 }

@@ -1,0 +1,168 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    Commandes - Administration Chez Aka
+{% endblock %}
+
+{% block body %}
+    <main>
+        <h1>Commandes Click & Collect</h1>
+
+        {% for label, messages in app.flashes %}
+            {% for message in messages %}
+                <div class="alert alert-{{ label }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endfor %}
+
+        {% if orders is empty %}
+            <p>Aucune commande pour le moment.</p>
+        {% else %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>Commande</th>
+                        <th>Client</th>
+                        <th>Retrait</th>
+                        <th>Total</th>
+                        <th>Statut</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for order in orders %}
+                        <tr>
+                            <td>
+                                {{ order.orderNumber }}
+                            </td>
+
+                            <td>
+                                {{ order.user.firstName }}
+                                {{ order.user.lastName }}
+
+                                <br>
+
+                                {{ order.user.email }}
+                            </td>
+
+                            <td>
+                                {{ order.serviceDay.serviceDate|date('d/m/Y') }}
+                                à
+                                {{ order.pickupTime|date('H:i') }}
+                            </td>
+
+                            <td>
+                                {{ order.totalAmount|number_format(2, ',', ' ') }}
+                                €
+                            </td>
+
+                            <td>
+                                {% if order.status == 'PENDING_PAYMENT' %}
+                                    Paiement en attente
+
+                                {% elseif order.status == 'CONFIRMED' %}
+                                    Confirmée et payée
+
+                                {% elseif order.status == 'PREPARING' %}
+                                    En préparation
+
+                                {% elseif order.status == 'READY' %}
+                                    Prête
+
+                                {% elseif order.status == 'COLLECTED' %}
+                                    Récupérée
+
+                                {% elseif order.status == 'CANCELLED' %}
+                                    Annulée
+
+                                {% else %}
+                                    {{ order.status }}
+                                {% endif %}
+                            </td>
+
+                            <td>
+                                {% if order.status == 'CONFIRMED' %}
+                                    <form
+                                        method="post"
+                                        action="{{ path(
+                                            'app_admin_order_status',
+                                            {
+                                                id: order.id,
+                                                status: 'PREPARING'
+                                            }
+                                        ) }}"
+                                    >
+                                        <input
+                                            type="hidden"
+                                            name="_token"
+                                            value="{{ csrf_token(
+                                                'order_status_' ~ order.id
+                                            ) }}"
+                                        >
+
+                                        <button type="submit">
+                                            Commencer la préparation
+                                        </button>
+                                    </form>
+
+                                {% elseif order.status == 'PREPARING' %}
+                                    <form
+                                        method="post"
+                                        action="{{ path(
+                                            'app_admin_order_status',
+                                            {
+                                                id: order.id,
+                                                status: 'READY'
+                                            }
+                                        ) }}"
+                                    >
+                                        <input
+                                            type="hidden"
+                                            name="_token"
+                                            value="{{ csrf_token(
+                                                'order_status_' ~ order.id
+                                            ) }}"
+                                        >
+
+                                        <button type="submit">
+                                            Marquer comme prête
+                                        </button>
+                                    </form>
+
+                                {% elseif order.status == 'READY' %}
+                                    <form
+                                        method="post"
+                                        action="{{ path(
+                                            'app_admin_order_status',
+                                            {
+                                                id: order.id,
+                                                status: 'COLLECTED'
+                                            }
+                                        ) }}"
+                                    >
+                                        <input
+                                            type="hidden"
+                                            name="_token"
+                                            value="{{ csrf_token(
+                                                'order_status_' ~ order.id
+                                            ) }}"
+                                        >
+
+                                        <button type="submit">
+                                            Commande récupérée
+                                        </button>
+                                    </form>
+
+                                {% else %}
+                                    —
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% endif %}
+    </main>
+{% endblock %}
