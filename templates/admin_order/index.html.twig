@@ -27,7 +27,7 @@
                         <th>Retrait</th>
                         <th>Total</th>
                         <th>Statut</th>
-                        <th>Action</th>
+                        <th>Actions</th>
                     </tr>
                 </thead>
 
@@ -83,6 +83,18 @@
                             </td>
 
                             <td>
+                                {# Toujours disponible #}
+                                <p>
+                                    <a href="{{ path(
+                                        'app_admin_order_show',
+                                        { id: order.id }
+                                    ) }}">
+                                        Voir le détail
+                                    </a>
+                                </p>
+
+                                {# Actions dépendantes du statut #}
+
                                 {% if order.status == 'CONFIRMED' %}
                                     <form
                                         method="post"
@@ -155,8 +167,20 @@
                                         </button>
                                     </form>
 
-                                {% else %}
-                                    —
+                                {% elseif order.status == 'COLLECTED' %}
+                                    <span>
+                                        Commande terminée
+                                    </span>
+
+                                {% elseif order.status == 'PENDING_PAYMENT' %}
+                                    <span>
+                                        En attente du paiement client
+                                    </span>
+
+                                {% elseif order.status == 'CANCELLED' %}
+                                    <span>
+                                        Commande annulée
+                                    </span>
                                 {% endif %}
                             </td>
                         </tr>

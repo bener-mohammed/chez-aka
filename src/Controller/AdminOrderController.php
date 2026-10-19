@@ -28,6 +28,23 @@ final class AdminOrderController extends AbstractController
     }
 
     #[Route(
+        '/{id}',
+        name: 'app_admin_order_show',
+        requirements: ['id' => '\d+'],
+        methods: ['GET']
+    )]
+    public function show(
+        CustomerOrder $customerOrder
+    ): Response {
+        return $this->render(
+            'admin_order/show.html.twig',
+            [
+                'order' => $customerOrder,
+            ]
+        );
+    }
+
+    #[Route(
         '/{id}/status/{status}',
         name: 'app_admin_order_status',
         requirements: [

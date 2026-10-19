@@ -1,0 +1,219 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    Détail commande - Administration Chez Aka
+{% endblock %}
+
+{% block body %}
+    <main>
+        <h1>Détail de la commande</h1>
+
+        <p>
+            <a href="{{ path('app_admin_order_index') }}">
+                ← Retour aux commandes
+            </a>
+        </p>
+
+        <section>
+            <h2>Commande</h2>
+
+            <p>
+                Numéro :
+                <strong>{{ order.orderNumber }}</strong>
+            </p>
+
+            <p>
+                Créée le :
+                <strong>
+                    {{ order.createdAt|date('d/m/Y à H:i') }}
+                </strong>
+            </p>
+
+            <p>
+                Retrait prévu :
+                <strong>
+                    {{ order.serviceDay.serviceDate|date('d/m/Y') }}
+                    à
+                    {{ order.pickupTime|date('H:i') }}
+                </strong>
+            </p>
+
+            <p>
+                Statut :
+                <strong>
+                    {% if order.status == 'PENDING_PAYMENT' %}
+                        Paiement en attente
+
+                    {% elseif order.status == 'CONFIRMED' %}
+                        Confirmée et payée
+
+                    {% elseif order.status == 'PREPARING' %}
+                        En préparation
+
+                    {% elseif order.status == 'READY' %}
+                        Prête
+
+                    {% elseif order.status == 'COLLECTED' %}
+                        Récupérée
+
+                    {% elseif order.status == 'CANCELLED' %}
+                        Annulée
+
+                    {% else %}
+                        {{ order.status }}
+                    {% endif %}
+                </strong>
+            </p>
+        </section>
+
+        <section>
+            <h2>Client</h2>
+
+            <p>
+                {{ order.user.firstName }}
+                {{ order.user.lastName }}
+            </p>
+
+            <p>
+                E-mail :
+                {{ order.user.email }}
+            </p>
+
+            <p>
+                Téléphone :
+                {{ order.user.phoneNumber }}
+            </p>
+        </section>
+
+        <section>
+            <h2>Produits</h2>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Produit</th>
+                        <th>Prix unitaire</th>
+                        <th>Quantité</th>
+                        <th>Total</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for item in order.orderItems %}
+                        <tr>
+                            <td>
+                                {{ item.product.name }}
+                            </td>
+
+                            <td>
+                                {{ item.unitPrice|number_format(2, ',', ' ') }}
+                                €
+                            </td>
+
+                            <td>
+                                {{ item.quantity }}
+                            </td>
+
+                            <td>
+                                {{
+                                    (item.unitPrice * item.quantity)
+                                    |number_format(2, ',', ' ')
+                                }}
+                                €
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+            <p>
+                <strong>
+                    Total commande :
+                    {{ order.totalAmount|number_format(2, ',', ' ') }}
+                    €
+                </strong>
+            </p>
+        </section>
+
+        <section>
+            <h2>Demande spéciale</h2>
+
+            {% if order.specialRequest %}
+                <p>
+                    {{ order.specialRequest }}
+                </p>
+            {% else %}
+                <p>
+                    Aucune demande spéciale.
+                </p>
+            {% endif %}
+        </section>
+
+        <section>
+            <h2>Paiements</h2>
+
+            {% if order.payments is empty %}
+                <p>
+                    Aucune tentative de paiement.
+                </p>
+            {% else %}
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Prestataire</th>
+                            <th>Montant</th>
+                            <th>Moyen</th>
+                            <th>Statut</th>
+                            <th>Date paiement</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        {% for payment in order.payments %}
+                            <tr>
+                                <td>
+                                    {{ payment.provider }}
+                                </td>
+
+                                <td>
+                                    {{ payment.amount|number_format(2, ',', ' ') }}
+                                    €
+                                </td>
+
+                                <td>
+                                    {{ payment.paymentMethod }}
+                                </td>
+
+                                <td>
+                                    {% if payment.status == 'PENDING' %}
+                                        En attente
+
+                                    {% elseif payment.status == 'SUCCEEDED' %}
+                                        Réussi
+
+                                    {% elseif payment.status == 'FAILED' %}
+                                        Échoué
+
+                                    {% elseif payment.status == 'REFUNDED' %}
+                                        Remboursé
+
+                                    {% else %}
+                                        {{ payment.status }}
+                                    {% endif %}
+                                </td>
+
+                                <td>
+                                    {% if payment.paidAt %}
+                                        {{ payment.paidAt|date('d/m/Y à H:i') }}
+                                    {% else %}
+                                        —
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% endif %}
+        </section>
+    </main>
+{% endblock %}
