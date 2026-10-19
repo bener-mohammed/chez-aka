@@ -6,6 +6,14 @@
 
 {% block body %}
     <main>
+        {% for label, messages in app.flashes %}
+            {% for message in messages %}
+                <div class="alert alert-{{ label }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endfor %}
+
         <h1>Commande enregistrée</h1>
 
         <p>
@@ -14,48 +22,81 @@
 
         <p>
             Numéro de commande :
-            <strong>
-                {{ order.orderNumber }}
-            </strong>
+            <strong>{{ order.orderNumber }}</strong>
         </p>
 
         <p>
             Date de retrait :
             <strong>
-                {{ order.serviceDay.serviceDate
-                    |date('d/m/Y')
-                }}
+                {{ order.serviceDay.serviceDate|date('d/m/Y') }}
             </strong>
         </p>
 
         <p>
             Heure de retrait :
             <strong>
-                {{ order.pickupTime
-                    |date('H:i')
-                }}
+                {{ order.pickupTime|date('H:i') }}
             </strong>
         </p>
 
         <p>
             Total :
             <strong>
-                {{ order.totalAmount
-                    |number_format(2, ',', ' ')
-                }} €
+                {{ order.totalAmount|number_format(2, ',', ' ') }} €
             </strong>
         </p>
 
         <p>
             Statut :
             <strong>
-                Paiement en attente
+                {% if order.status == 'PENDING_PAYMENT' %}
+                    Paiement en attente
+                {% elseif order.status == 'CONFIRMED' %}
+                    Commande confirmée et payée
+                {% elseif order.status == 'PREPARING' %}
+                    En préparation
+                {% elseif order.status == 'READY' %}
+                    Prête à être récupérée
+                {% elseif order.status == 'COLLECTED' %}
+                    Commande récupérée
+                {% elseif order.status == 'CANCELLED' %}
+                    Commande annulée
+                {% else %}
+                    {{ order.status }}
+                {% endif %}
             </strong>
         </p>
 
-        <p>
-            La commande devra être payée
-            par carte avant d'être confirmée.
-        </p>
+        {% if order.status == 'PENDING_PAYMENT' %}
+            <form
+                method="post"
+                action="{{ path('app_payment_stripe', { id: order.id }) }}"
+                data-turbo="false"
+            >
+                <input
+                    type="hidden"
+                    name="_token"
+                    value="{{ csrf_token('payment_' ~ order.id) }}"
+                >
+
+                <button type="submit">
+                    Payer
+                    {{ order.totalAmount|number_format(2, ',', ' ') }}
+                    € par carte
+                </button>
+            </form>
+        {% endif %}
+
+        {% if order.status == 'PENDING_PAYMENT' %}
+            <p>
+                La commande devra être payée
+                par carte avant d'être confirmée.
+            </p>
+        {% elseif order.status == 'CONFIRMED' %}
+            <p>
+                Votre paiement a été confirmé.
+                Votre commande est enregistrée pour le retrait prévu.
+            </p>
+        {% endif %}
     </main>
 {% endblock %}

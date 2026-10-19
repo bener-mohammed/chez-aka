@@ -1,0 +1,32 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    Paiement annulé - Chez Aka
+{% endblock %}
+
+{% block body %}
+    <main>
+        <h1>Paiement annulé</h1>
+
+        <p>
+            Aucun paiement n'a été confirmé.
+        </p>
+
+        <p>
+            Votre commande
+            <strong>
+                {{ order.orderNumber }}
+            </strong>
+            reste en attente de paiement.
+        </p>
+
+        <p>
+            <a href="{{ path(
+                'app_checkout_confirmation',
+                { id: order.id }
+            ) }}">
+                Revenir à ma commande
+            </a>
+        </p>
+    </main>
+{% endblock %}

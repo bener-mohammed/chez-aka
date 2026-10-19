@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Repository\PaymentRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: PaymentRepository::class)]
 class Payment
@@ -15,18 +16,38 @@ class Payment
     private ?int $id = null;
 
     #[ORM\Column(length: 50)]
+    #[Assert\NotBlank(message: 'Le prestataire de paiement est obligatoire.')]
+    #[Assert\Length(max: 50)]
     private ?string $provider = null;
 
     #[ORM\Column(length: 255, nullable: true, unique: true)]
+    #[Assert\Length(max: 255)]
     private ?string $transactionReference = null;
 
     #[ORM\Column(type: Types::DECIMAL, precision: 10, scale: 2)]
+    #[Assert\NotNull]
+    #[Assert\Positive(
+        message: 'Le montant du paiement doit être supérieur à zéro.'
+    )]
     private ?string $amount = null;
 
     #[ORM\Column(length: 20)]
+    #[Assert\Choice(
+        choices: [
+            'PENDING',
+            'SUCCEEDED',
+            'FAILED',
+            'REFUNDED',
+        ],
+        message: 'Statut de paiement invalide.'
+    )]
     private string $status = 'PENDING';
 
     #[ORM\Column(length: 30)]
+    #[Assert\Choice(
+        choices: ['CARD'],
+        message: 'Moyen de paiement invalide.'
+    )]
     private string $paymentMethod = 'CARD';
 
     #[ORM\Column]
@@ -42,6 +63,7 @@ class Payment
         nullable: false,
         onDelete: 'RESTRICT'
     )]
+    #[Assert\NotNull]
     private ?CustomerOrder $customerOrder = null;
 
     public function __construct()

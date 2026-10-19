@@ -1,0 +1,36 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    Paiement reçu - Chez Aka
+{% endblock %}
+
+{% block body %}
+    <main>
+        <h1>Paiement transmis</h1>
+
+        <p>
+            Stripe a bien renvoyé votre navigateur
+            vers Chez Aka.
+        </p>
+
+        <p>
+            Commande :
+            <strong>
+                {{ order.orderNumber }}
+            </strong>
+        </p>
+
+        <p>
+            Statut actuel :
+            <strong>
+                {{ order.status }}
+            </strong>
+        </p>
+
+        <p>
+            La confirmation définitive du paiement
+            est effectuée automatiquement
+            après vérification par Stripe.
+        </p>
+    </main>
+{% endblock %}
