@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Repository\PaymentRepository;
+use App\Service\OrderMailer;
 use Doctrine\ORM\EntityManagerInterface;
 use Stripe\Exception\SignatureVerificationException;
 use Stripe\Webhook;
@@ -10,6 +11,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 use Symfony\Component\Routing\Attribute\Route;
 
 final class StripeWebhookController extends AbstractController
@@ -23,6 +25,7 @@ final class StripeWebhookController extends AbstractController
         Request $request,
         PaymentRepository $paymentRepository,
         EntityManagerInterface $entityManager,
+        OrderMailer $orderMailer,
         #[Autowire('%stripe.webhook_secret%')]
         string $webhookSecret
     ): Response {
@@ -89,8 +92,8 @@ final class StripeWebhookController extends AbstractController
 
         /*
          * Webhook idempotent :
-         * si Stripe renvoie plusieurs fois le même événement,
-         * on ne traite pas deux fois le paiement.
+         * un même paiement Stripe ne doit pas
+         * être traité plusieurs fois.
          */
         if ($payment->getStatus() === 'SUCCEEDED') {
             return new Response(
@@ -118,6 +121,10 @@ final class StripeWebhookController extends AbstractController
             );
         }
 
+        /*
+         * Vérification supplémentaire du montant reçu
+         * depuis Stripe.
+         */
         if (
             isset($session->amount_total)
             && is_int($session->amount_total)
@@ -142,7 +149,23 @@ final class StripeWebhookController extends AbstractController
             ->setStatus('CONFIRMED')
             ->setUpdatedAt(new \DateTimeImmutable());
 
+        /*
+         * La réussite du paiement est enregistrée
+         * avant l'envoi de l'e-mail.
+         */
         $entityManager->flush();
+
+        try {
+            $orderMailer->sendConfirmed(
+                $customerOrder
+            );
+        } catch (TransportExceptionInterface) {
+            /*
+             * Une panne du service e-mail ne doit jamais
+             * faire considérer le paiement Stripe
+             * comme ayant échoué.
+             */
+        }
 
         return new Response(
             'Webhook traité.',

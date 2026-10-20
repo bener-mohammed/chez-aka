@@ -4,10 +4,12 @@ namespace App\Controller;
 
 use App\Entity\CustomerOrder;
 use App\Repository\CustomerOrderRepository;
+use App\Service\OrderMailer;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
@@ -57,7 +59,8 @@ final class AdminOrderController extends AbstractController
         CustomerOrder $customerOrder,
         string $status,
         Request $request,
-        EntityManagerInterface $entityManager
+        EntityManagerInterface $entityManager,
+        OrderMailer $orderMailer
     ): Response {
         if (!$this->isCsrfTokenValid(
             'order_status_'.$customerOrder->getId(),
@@ -100,10 +103,32 @@ final class AdminOrderController extends AbstractController
 
         $entityManager->flush();
 
-        $this->addFlash(
-            'success',
-            'Le statut de la commande a été mis à jour.'
-        );
+        /*
+         * On prévient le client uniquement quand
+         * sa commande devient réellement prête.
+         */
+        if ($status === 'READY') {
+            try {
+                $orderMailer->sendReady(
+                    $customerOrder
+                );
+
+                $this->addFlash(
+                    'success',
+                    'La commande est prête et le client a été averti par e-mail.'
+                );
+            } catch (TransportExceptionInterface) {
+                $this->addFlash(
+                    'warning',
+                    'La commande est prête, mais l’e-mail n’a pas pu être envoyé.'
+                );
+            }
+        } else {
+            $this->addFlash(
+                'success',
+                'Le statut de la commande a été mis à jour.'
+            );
+        }
 
         return $this->redirectToRoute(
             'app_admin_order_index'
