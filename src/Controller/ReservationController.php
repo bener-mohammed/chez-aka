@@ -5,11 +5,13 @@ namespace App\Controller;
 use App\Entity\AppUser;
 use App\Entity\Reservation;
 use App\Form\ReservationType;
+use App\Service\ReservationMailer;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 use Symfony\Component\Routing\Attribute\Route;
 
 final class ReservationController extends AbstractController
@@ -17,7 +19,8 @@ final class ReservationController extends AbstractController
     #[Route('/reservation', name: 'app_reservation', methods: ['GET', 'POST'])]
     public function index(
         Request $request,
-        EntityManagerInterface $entityManager
+        EntityManagerInterface $entityManager,
+        ReservationMailer $reservationMailer
     ): Response {
         $reservation = new Reservation();
 
@@ -84,10 +87,12 @@ final class ReservationController extends AbstractController
                     && $partySize > $serviceDay->getMaxOnlinePartySize()
                 ) {
                     $form->get('partySize')->addError(
-                        new FormError(sprintf(
-                            'Pour cette soirée, les réservations en ligne sont limitées à %d personnes.',
-                            $serviceDay->getMaxOnlinePartySize()
-                        ))
+                        new FormError(
+                            sprintf(
+                                'Pour cette soirée, les réservations en ligne sont limitées à %d personnes.',
+                                $serviceDay->getMaxOnlinePartySize()
+                            )
+                        )
                     );
                 }
             }
@@ -124,13 +129,32 @@ final class ReservationController extends AbstractController
             if ($form->isValid()) {
                 $reservation->setStatus('PENDING');
 
+                /*
+                 * La réservation est d'abord enregistrée.
+                 * L'e-mail reste une notification secondaire.
+                 */
                 $entityManager->persist($reservation);
                 $entityManager->flush();
 
-                $this->addFlash(
-                    'success',
-                    'Votre demande de réservation a bien été envoyée. Elle doit maintenant être confirmée par le restaurant.'
-                );
+                try {
+                    $reservationMailer->sendReceived(
+                        $reservation
+                    );
+
+                    $this->addFlash(
+                        'success',
+                        'Votre demande de réservation a bien été envoyée. Un e-mail de confirmation de réception vous a été envoyé.'
+                    );
+                } catch (TransportExceptionInterface) {
+                    /*
+                     * Même si l'e-mail échoue, la réservation existe
+                     * bien en base et reste PENDING.
+                     */
+                    $this->addFlash(
+                        'warning',
+                        'Votre demande de réservation a bien été enregistrée, mais l’e-mail de confirmation n’a pas pu être envoyé.'
+                    );
+                }
 
                 return $this->redirectToRoute(
                     'app_reservation_success'

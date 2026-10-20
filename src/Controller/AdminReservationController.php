@@ -4,10 +4,12 @@ namespace App\Controller;
 
 use App\Entity\Reservation;
 use App\Repository\ReservationRepository;
+use App\Service\ReservationMailer;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
@@ -36,7 +38,8 @@ final class AdminReservationController extends AbstractController
         Reservation $reservation,
         Request $request,
         ReservationRepository $reservationRepository,
-        EntityManagerInterface $entityManager
+        EntityManagerInterface $entityManager,
+        ReservationMailer $reservationMailer
     ): Response {
         if (!$this->isCsrfTokenValid(
             'confirm'.$reservation->getId(),
@@ -127,12 +130,27 @@ final class AdminReservationController extends AbstractController
             ->setStatus('CONFIRMED')
             ->setProcessedAt(new \DateTimeImmutable());
 
+        /*
+         * On sauvegarde d'abord la décision métier.
+         * L'e-mail n'est qu'une notification.
+         */
         $entityManager->flush();
 
-        $this->addFlash(
-            'success',
-            'La réservation a été confirmée.'
-        );
+        try {
+            $reservationMailer->sendConfirmed(
+                $reservation
+            );
+
+            $this->addFlash(
+                'success',
+                'La réservation a été confirmée et le client a été averti par e-mail.'
+            );
+        } catch (TransportExceptionInterface) {
+            $this->addFlash(
+                'warning',
+                'La réservation a été confirmée, mais l’e-mail n’a pas pu être envoyé.'
+            );
+        }
 
         return $this->redirectToRoute(
             'app_admin_reservation_index'
@@ -147,7 +165,8 @@ final class AdminReservationController extends AbstractController
     public function refuse(
         Reservation $reservation,
         Request $request,
-        EntityManagerInterface $entityManager
+        EntityManagerInterface $entityManager,
+        ReservationMailer $reservationMailer
     ): Response {
         if (!$this->isCsrfTokenValid(
             'refuse'.$reservation->getId(),
@@ -176,10 +195,21 @@ final class AdminReservationController extends AbstractController
 
         $entityManager->flush();
 
-        $this->addFlash(
-            'success',
-            'La réservation a été refusée.'
-        );
+        try {
+            $reservationMailer->sendRefused(
+                $reservation
+            );
+
+            $this->addFlash(
+                'success',
+                'La réservation a été refusée et le client a été averti par e-mail.'
+            );
+        } catch (TransportExceptionInterface) {
+            $this->addFlash(
+                'warning',
+                'La réservation a été refusée, mais l’e-mail n’a pas pu être envoyé.'
+            );
+        }
 
         return $this->redirectToRoute(
             'app_admin_reservation_index'

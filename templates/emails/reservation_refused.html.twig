@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Réservation non disponible</title>
+</head>
+
+<body>
+    <h1>Bonjour {{ reservation.firstName }},</h1>
+
+    <p>
+        Nous avons bien étudié votre demande
+        de réservation chez Chez Aka.
+    </p>
+
+    <p>
+        Malheureusement, nous ne pouvons pas
+        confirmer votre réservation pour :
+    </p>
+
+    <p>
+        <strong>Date :</strong>
+        {{ reservation.serviceDay.serviceDate|date('d/m/Y') }}
+    </p>
+
+    <p>
+        <strong>Heure :</strong>
+        {{ reservation.reservationTime|date('H:i') }}
+    </p>
+
+    <p>
+        <strong>Nombre de personnes :</strong>
+        {{ reservation.partySize }}
+    </p>
+
+    <p>
+        Nous vous invitons à choisir une autre date
+        ou à nous contacter.
+    </p>
+
+    <p>
+        L'équipe Chez Aka
+    </p>
+</body>
+</html>

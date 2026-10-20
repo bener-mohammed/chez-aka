@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Demande de réservation reçue</title>
+</head>
+
+<body>
+    <h1>Bonjour {{ reservation.firstName }},</h1>
+
+    <p>
+        Nous avons bien reçu votre demande
+        de réservation chez Chez Aka.
+    </p>
+
+    <p>
+        <strong>Date :</strong>
+        {{ reservation.serviceDay.serviceDate|date('d/m/Y') }}
+    </p>
+
+    <p>
+        <strong>Heure :</strong>
+        {{ reservation.reservationTime|date('H:i') }}
+    </p>
+
+    <p>
+        <strong>Nombre de personnes :</strong>
+        {{ reservation.partySize }}
+    </p>
+
+    <p>
+        Votre demande est actuellement en attente
+        de validation par notre équipe.
+    </p>
+
+    <p>
+        Vous recevrez un nouvel e-mail dès que
+        votre réservation aura été traitée.
+    </p>
+
+    <p>
+        À bientôt,<br>
+        L'équipe Chez Aka
+    </p>
+</body>
+</html>
