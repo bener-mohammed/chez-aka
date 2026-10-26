@@ -1,0 +1,300 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    Chez Aka - Restaurant, bar et musique à Bordeaux
+{% endblock %}
+
+{% block meta_description %}
+    Chez Aka, restaurant-bar à Bordeaux : cuisine conviviale, musique live, événements, réservation et Click & Collect.
+{% endblock %}
+
+{% block body %}
+
+    <main class="home">
+
+        {# =====================================
+           HERO
+        ====================================== #}
+
+        <section class="hero">
+
+            <div class="hero-content">
+
+                <p class="hero-eyebrow">
+                    Restaurant • Bar • Musique
+                </p>
+
+                <h1>
+                    Chez Aka
+                </h1>
+
+                <p class="hero-intro">
+                    Une table, des verres, de la musique
+                    et des soirées qui vivent jusqu'au bout de la nuit.
+                </p>
+
+                <div class="hero-actions">
+
+                    <a
+                        href="/reservation"
+                        class="button"
+                    >
+                        Réserver une table
+                    </a>
+
+                    <a
+                        href="/carte"
+                        class="button button-secondary"
+                    >
+                        Découvrir la carte
+                    </a>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        {# =====================================
+           INTRODUCTION
+        ====================================== #}
+
+        <section class="home-section home-intro">
+
+            <div class="section-heading">
+
+                <p class="section-kicker">
+                    L'esprit Chez Aka
+                </p>
+
+                <h2>
+                    Bien plus qu'un restaurant
+                </h2>
+
+                <p class="section-intro">
+                    Chez Aka, on vient dîner, boire un verre,
+                    écouter de la musique et partager une soirée
+                    dans un lieu vivant et chaleureux.
+                </p>
+
+            </div>
+
+        </section>
+
+
+        {# =====================================
+           CUISINE
+        ====================================== #}
+
+        <section class="home-showcase">
+
+            <div class="home-showcase-image">
+
+                <img
+                    src="/images/chez-aka/cuisine.jpg"
+                    alt="Plat servi au restaurant Chez Aka"
+                    loading="lazy"
+                >
+
+            </div>
+
+            <div class="home-showcase-content">
+
+                <p class="section-kicker">
+                    La cuisine
+                </p>
+
+                <h2>
+                    Généreuse et conviviale
+                </h2>
+
+                <p>
+                    Des plats préparés pour se retrouver autour
+                    d'une table, découvrir des saveurs et profiter
+                    simplement du moment.
+                </p>
+
+                <a
+                    href="/carte"
+                    class="home-text-link"
+                >
+                    Découvrir la carte
+                    <span aria-hidden="true">→</span>
+                </a>
+
+            </div>
+
+        </section>
+
+
+        {# =====================================
+           MUSIQUE
+        ====================================== #}
+
+        <section class="home-showcase home-showcase-reverse">
+
+            <div class="home-showcase-image">
+
+                <img
+                    src="/images/chez-aka/musique.jpg"
+                    alt="Musiciens jouant sur la scène de Chez Aka"
+                    loading="lazy"
+                >
+
+            </div>
+
+            <div class="home-showcase-content">
+
+                <p class="section-kicker">
+                    La musique
+                </p>
+
+                <h2>
+                    Une scène au cœur du lieu
+                </h2>
+
+                <p>
+                    La musique fait partie de l'identité de Chez Aka.
+                    La scène accueille régulièrement des musiciens,
+                    des rencontres et des soirées live.
+                </p>
+
+                <a
+                    href="/evenements"
+                    class="home-text-link"
+                >
+                    Voir les événements
+                    <span aria-hidden="true">→</span>
+                </a>
+
+            </div>
+
+        </section>
+
+
+        {# =====================================
+           LE LIEU
+        ====================================== #}
+
+        <section class="home-showcase">
+
+            <div class="home-showcase-image">
+
+                <img
+                    src="/images/chez-aka/facade.jpg"
+                    alt="Façade du restaurant Chez Aka à Bordeaux"
+                    loading="lazy"
+                >
+
+            </div>
+
+            <div class="home-showcase-content">
+
+                <p class="section-kicker">
+                    Le lieu
+                </p>
+
+                <h2>
+                    Un endroit à part
+                </h2>
+
+                <p>
+                    Un restaurant-bar à l'ambiance chaleureuse,
+                    entre décoration, lumières, musique et moments
+                    partagés.
+                </p>
+
+                <a
+                    href="/reservation"
+                    class="home-text-link"
+                >
+                    Réserver une table
+                    <span aria-hidden="true">→</span>
+                </a>
+
+            </div>
+
+        </section>
+
+
+        {# =====================================
+           CLICK & COLLECT
+        ====================================== #}
+
+        <section class="home-click-collect">
+
+            <div class="home-click-collect-image">
+
+                <img
+                    src="/images/chez-aka/click-collect.jpg"
+                    alt="Commande de plats à emporter préparée chez Chez Aka"
+                    loading="lazy"
+                >
+
+            </div>
+
+            <div class="home-click-collect-content">
+
+                <p class="section-kicker">
+                    Click & Collect
+                </p>
+
+                <h2>
+                    Chez Aka, aussi à emporter
+                </h2>
+
+                <p>
+                    Commandez une sélection de plats en ligne
+                    et récupérez votre commande directement
+                    au restaurant.
+                </p>
+
+                <a
+                    href="/click-collect"
+                    class="button"
+                >
+                    Commander en ligne
+                </a>
+
+            </div>
+
+        </section>
+
+
+        {# =====================================
+           RÉSERVATION
+        ====================================== #}
+
+        <section class="home-reservation">
+
+            <div>
+
+                <p class="section-kicker">
+                    Votre soirée chez Aka
+                </p>
+
+                <h2>
+                    Une table vous attend
+                </h2>
+
+                <p>
+                    Envoyez votre demande de réservation en ligne.
+                    L'équipe Chez Aka pourra ensuite la confirmer
+                    selon les disponibilités.
+                </p>
+
+            </div>
+
+            <a
+                href="/reservation"
+                class="button"
+            >
+                Réserver maintenant
+            </a>
+
+        </section>
+
+    </main>
+
+{% endblock %}
