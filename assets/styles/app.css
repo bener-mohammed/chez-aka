@@ -979,3 +979,18 @@ td form input[type="number"] {
         grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 }
+
+
+/* Navigation mobile : afficher tous les liens */
+
+@media (max-width: 849px) {
+    .main-nav {
+        flex-wrap: wrap;
+        overflow-x: visible;
+    }
+
+    .main-nav a {
+        flex: 1 1 auto;
+        justify-content: center;
+    }
+}
