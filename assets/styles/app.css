@@ -544,7 +544,7 @@ td form input[type="number"] {
     background-color: var(--color-bg-soft);
     background-image:
         linear-gradient(to top, rgba(10, 6, 8, 0.97), rgba(10, 6, 8, 0.62) 55%, rgba(10, 6, 8, 0.22)),
-        url('/images/chez-aka/hero-mobile.jpg');
+        url('/images/chez-aka/hero-mobile.webp');
     background-repeat: no-repeat;
     background-size: cover;
     background-position: center;
@@ -796,7 +796,7 @@ td form input[type="number"] {
         min-height: min(54rem, calc(100vh - 82px));
         background-image:
             linear-gradient(90deg, rgba(10, 6, 8, 0.93) 0%, rgba(10, 6, 8, 0.75) 38%, rgba(10, 6, 8, 0.27) 100%),
-            url('/images/chez-aka/hero-desktop.jpg');
+            url('/images/chez-aka/hero-desktop.webp');
     }
 
     .hero h1 {
