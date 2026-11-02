@@ -1,43 +1,90 @@
+
 {% extends 'base.html.twig' %}
 
-{% block title %}La carte - Chez Aka{% endblock %}
+{% block title %}
+    La carte - Chez Aka
+{% endblock %}
+
+{% block meta_description %}
+    Découvrez la carte du restaurant Chez Aka à Bordeaux :
+    plats généreux, spécialités et saveurs d'ici et d'ailleurs.
+{% endblock %}
 
 {% block body %}
-    <main>
+
+<main class="menu-page">
+
+    <header class="menu-page-header">
+        <p class="section-kicker">
+            Nos saveurs
+        </p>
+
         <h1>La carte</h1>
 
-        {% if menu_by_category is empty %}
-            <p>La carte sera bientôt disponible.</p>
-        {% else %}
+        <p class="menu-page-intro">
+            Une cuisine généreuse, des saveurs d'ici
+            et d'ailleurs, et le plaisir de partager.
+        </p>
+    </header>
 
-            {% for section in menu_by_category %}
-                <section>
-                    <h2>
-                        {{ section.category.name }}
-                    </h2>
+    {% if menu_by_category is empty %}
+
+        <p class="menu-empty">
+            Notre carte sera bientôt disponible.
+        </p>
+
+    {% else %}
+
+        {% for section in menu_by_category %}
+
+            <section
+                class="menu-category"
+                aria-labelledby="category-{{ section.category.id }}"
+            >
+
+                <h2
+                    id="category-{{ section.category.id }}"
+                    class="menu-category-title"
+                >
+                    {{ section.category.name }}
+                </h2>
+
+                <div class="menu-grid">
 
                     {% for product in section.products %}
-                        <article>
-                            <h3>
-                                {{ product.name }}
-                            </h3>
 
-                            {% if product.description %}
-                                <p>
-                                    {{ product.description }}
-                                </p>
-                            {% endif %}
+                        <article class="menu-item">
 
-                            <p>
-                                <strong>
-                                    {{ product.price|number_format(2, ',', ' ') }} €
-                                </strong>
+                            <div class="menu-item-content">
+
+                                <h3 class="menu-item-name">
+                                    {{ product.name }}
+                                </h3>
+
+                                {% if product.description %}
+                                    <p class="menu-item-description">
+                                        {{ product.description }}
+                                    </p>
+                                {% endif %}
+
+                            </div>
+
+                            <p class="menu-item-price">
+                                {{ product.price|number_format(2, ',', ' ') }} €
                             </p>
-                        </article>
-                    {% endfor %}
-                </section>
-            {% endfor %}
 
-        {% endif %}
-    </main>
+                        </article>
+
+                    {% endfor %}
+
+                </div>
+
+            </section>
+
+        {% endfor %}
+
+    {% endif %}
+
+</main>
+
 {% endblock %}
