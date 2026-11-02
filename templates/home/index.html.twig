@@ -8,6 +8,29 @@
     Chez Aka, restaurant-bar à Bordeaux : cuisine conviviale, musique live, événements, réservation et Click & Collect.
 {% endblock %}
 
+
+{# Préchargement prioritaire des images du hero #}
+{% block stylesheets %}
+    {{ parent() }}
+
+    <link
+        rel="preload"
+        as="image"
+        href="{{ asset('images/chez-aka/hero-mobile.webp') }}"
+        media="(max-width: 849px)"
+        fetchpriority="high"
+    >
+
+    <link
+        rel="preload"
+        as="image"
+        href="{{ asset('images/chez-aka/hero-desktop.webp') }}"
+        media="(min-width: 850px)"
+        fetchpriority="high"
+    >
+{% endblock %}
+
+
 {% block body %}
 
     <main class="home">
